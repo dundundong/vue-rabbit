@@ -4,7 +4,7 @@
 
 ## 1.2src下创建项目结构
 
-![1763284158765](C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\1763284158765.png)
+![1763285183496](README/1763285183496.png)
 
 1.3初始化git并推送github仓库
 
