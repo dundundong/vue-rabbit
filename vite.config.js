@@ -11,6 +11,7 @@ export default defineConfig({
     vueDevTools(),
   ],
   resolve: {
+    //实际路劲转换 @ -》src
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
