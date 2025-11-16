@@ -197,5 +197,73 @@ export default defineConfig({
 
 ```
 
+3 基础实例配置
+
+axios基础配置
+
+安装
+
+```
+npm i axios
+```
+
+​	在utils目录下创建http.js
+
+```
+//axios基础封装
+
+import axios from "axios";
+
+const httpInstance = axios.create({
+    baseURL: 'https://pcapi-xiaotuxian-front-devtest.itheima.net',
+    timeout: 5000
+})
+
+//拦截器
+// axios请求拦截器
+httpInstance.interceptors.request.use(config => {
+  return config
+}, e => Promise.reject(e))
+
+// axios响应式拦截器
+httpInstance.interceptors.response.use(res => res.data, e => {
+  return Promise.reject(e)
+})
 
 
+export default httpInstance
+```
+
+这东西是给API服务的
+
+创建testAPI.js
+
+![1763300073394](README/1763300073394.png)
+
+配置
+
+```
+import httpInstance from "@/utils/http";
+
+export function getCategory () {
+  return httpInstance({
+    url: 'home/category/head'
+  })
+}
+```
+
+测试
+
+在main.js里添加测试接口
+
+```
+//测试接口函数
+import { getCategory } from '@/apis/testAPI'
+getCategory().then(res =>{
+    console.log(res)
+})
+```
+
+![1763300166637](README/1763300166637.png)
+
+成功
