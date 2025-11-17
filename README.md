@@ -674,3 +674,12 @@ const {y} = useScroll(window)
     <div class="container">
 ```
 
+6.4重复请求优化
+
+为啥
+
+LayoutFixed.vue和LayoutHeader.vue 发送了两次相同网络请求，资源浪费
+
+逻辑图
+
+![1763384640558](README/1763384640558.png)
