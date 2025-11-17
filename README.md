@@ -371,3 +371,31 @@ css: {
 }
 ```
 
+## 6 Layout页面搭建
+
+创建页面结构如下 ![1763363444277](README/1763363444277.png)
+
+配置路由   （Layout/index.vue）
+
+```
+<script setup>
+import LayoutNav from './components/LayoutNav.vue'
+import LayoutHeader from './components/LayoutHeader.vue'
+import LayoutFooter from './components/LayoutFooter.vue'
+</script>
+
+<template>
+  <div>
+  <LayoutNav />
+  <LayoutHeader />
+  <RouterView />
+  <LayoutFooter />
+  </div>
+</template>
+```
+
+效果：![1763363519547](README/1763363519547.png)
+
+6.1引入阿里图标库
+
+网址：https://www.iconfont.cn/help/detail?spm=a313x.help_index.i3.48.21523a81nYt6cR&helptype=code![1763363692894](README/1763363692894.png)
