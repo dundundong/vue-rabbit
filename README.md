@@ -197,7 +197,7 @@ export default defineConfig({
 
 ```
 
-3 基础实例配置
+## 3 基础实例配置
 
 axios基础配置
 
@@ -267,3 +267,78 @@ getCategory().then(res =>{
 ![1763300166637](README/1763300166637.png)
 
 成功
+
+
+
+## 4 路由设置
+
+一级路由（页面整体切换）
+
+1.创建页面
+
+![1763342654599](README/1763342654599.png)
+
+2.在router里的index.js配置路由表
+
+```
+ routes: [
+    {
+      path:'/',
+      component:Layout
+    },
+    {
+      path:'/login',
+      component:Login
+    }
+  ],
+```
+
+3.App.js配置路由出口
+
+```
+<template>
+  <!--一级路由出口组件-->
+  <router-view/>
+</template>
+```
+
+
+
+二级路由（在一级路由页内部切换）
+
+1.创建页面
+
+![1763343415567](README/1763343415567.png)
+
+2.在router里的index.js配置路由表
+
+```
+{
+      path:'/',
+      component:Layout,
+      children:[
+        {
+          path:'',   //默认二级路由，置空
+          component:Home
+        },
+        {
+          path:'category',
+          component:Category
+        }
+      ]
+    },
+```
+
+3.Layout.js配置路由出口
+
+```
+<template>
+    <div>我是首页
+    <!--二级路由出口-->
+    <RouterView/>
+    </div>
+</template>
+```
+
+## 5样式文件配置
+
