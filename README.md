@@ -340,5 +340,34 @@ getCategory().then(res =>{
 </template>
 ```
 
-## 5样式文件配置
+
+
+# 5 静态资源引入
+ 静态资源引入
+
+1. 图片资源 - 把 images 文件夹放到 assets 目录下
+2. 样式资源 - 把 common.scss 文件放到 styles 目录下
+
+scss变量自动导入
+
+```css
+$xtxColor: #27ba9b;
+$helpColor: #e26237;
+$sucColor: #1dc779;
+$warnColor: #ffb302;
+$priceColor: #cf4444;
+```
+```json
+css: {
+    preprocessorOptions: {
+      scss: {
+        // 自动导入scss文件
+        additionalData: `
+          @use "@/styles/element/index.scss" as *;
+          @use "@/styles/var.scss" as *;
+        `,
+      }
+    }
+}
+```
 
