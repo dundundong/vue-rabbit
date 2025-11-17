@@ -399,3 +399,278 @@ import LayoutFooter from './components/LayoutFooter.vue'
 6.1引入阿里图标库
 
 网址：https://www.iconfont.cn/help/detail?spm=a313x.help_index.i3.48.21523a81nYt6cR&helptype=code![1763363692894](README/1763363692894.png)
+
+> 字体图标采用的是阿里的字体图标库，样式文件已经准备好，在 `index.html`文件中引入即可
+
+```html
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_2143783_iq6z4ey5vu.css">
+```
+
+6.2 一级导航渲染
+
+封装请求函数![1763366211223](README/1763366211223.png)
+
+```
+import httpInstance from "@/utils/http";
+
+export function getCategoryAPI(){
+    return httpInstance({
+        url:'/home/category/head'
+    })
+}
+
+```
+
+LayoutHeader.vue 更新接口请求代码
+
+```
+<script setup>
+import {getCategoryAPI} from '@/apis/layout'
+import { ref,onMounted } from 'vue'
+
+const categoryList =ref([])
+const getCategory = async() =>{
+  const res = await getCategoryAPI()
+  console.log(res)
+  categoryList.value = res.result
+}
+
+onMounted(() =>{
+  getCategory()
+})
+</script>
+
+<template>
+  <header class='app-header'>
+    <div class="container">
+      <h1 class="logo">
+        <RouterLink to="/">小兔鲜</RouterLink>
+      </h1>
+      <ul class="app-header-nav">
+        <li class="home" v-for="item in categoryList" :key="item.id">
+          <RouterLink to="/">{{item.name}}</RouterLink>
+        </li>
+        
+      </ul>
+      <div class="search">
+        <i class="iconfont icon-search"></i>
+        <input type="text" placeholder="搜一搜">
+      </div>
+      <!-- 头部购物车 -->
+      
+    </div>
+  </header>
+</template>
+```
+
+6.3吸顶导航
+
+逻辑：准备吸顶导航组件 -》 获取滚动距离 -》以滚动距离做判断条件控制组件盒子是否展示
+
+1.准备吸顶导航组件
+
+![1763367256770](README/1763367256770.png)
+
+```
+<script setup>
+
+</script>
+
+<template>
+  <div class="app-header-sticky">
+    <div class="container">
+      <RouterLink class="logo" to="/" />
+      <!-- 导航区域 -->
+      <ul class="app-header-nav ">
+        <li class="home">
+          <RouterLink to="/">首页</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/">居家</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/">美食</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/">服饰</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/">母婴</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/">个护</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/">严选</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/">数码</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/">运动</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/">杂项</RouterLink>
+        </li>
+      </ul>
+
+      <div class="right">
+        <RouterLink to="/">品牌</RouterLink>
+        <RouterLink to="/">专题</RouterLink>
+      </div>
+    </div>
+  </div>
+</template>
+
+
+<style scoped lang='scss'>
+.app-header-sticky {
+  width: 100%;
+  height: 80px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 999;
+  background-color: #fff;
+  border-bottom: 1px solid #e4e4e4;
+  // 此处为关键样式!!!
+  // 状态一：往上平移自身高度 + 完全透明
+  transform: translateY(-100%);
+  opacity: 0;
+
+  // 状态二：移除平移 + 完全不透明
+  &.show {
+    transition: all 0.3s linear;
+    transform: none;
+    opacity: 1;
+  }
+
+  .container {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    width: 200px;
+    height: 80px;
+    background: url("@/assets/images/logo.png") no-repeat right 2px;
+    background-size: 160px auto;
+  }
+
+  .right {
+    width: 220px;
+    display: flex;
+    text-align: center;
+    padding-left: 40px;
+    border-left: 2px solid $xtxColor;
+
+    a {
+      width: 38px;
+      margin-right: 40px;
+      font-size: 16px;
+      line-height: 1;
+
+      &:hover {
+        color: $xtxColor;
+      }
+    }
+  }
+}
+
+.app-header-nav {
+  width: 820px;
+  display: flex;
+  padding-left: 40px;
+  position: relative;
+  z-index: 998;
+
+  li {
+    margin-right: 40px;
+    width: 38px;
+    text-align: center;
+
+    a {
+      font-size: 16px;
+      line-height: 32px;
+      height: 32px;
+      display: inline-block;
+
+      &:hover {
+        color: $xtxColor;
+        border-bottom: 1px solid $xtxColor;
+      }
+    }
+
+    .active {
+      color: $xtxColor;
+      border-bottom: 1px solid $xtxColor;
+    }
+  }
+}
+</style>
+```
+
+吸顶组件有个样式代码
+
+```
+ &.show {
+    transition: all 0.3s linear;
+    transform: none;
+    opacity: 1;
+  }
+```
+
+如果
+
+```
+<div class="app-header-sticky">
+```
+
+变成
+
+```
+<div class="app-header-sticky" show>
+```
+
+那么组件就显示，那么show的开启与否就是开启的条件
+
+2.获取滚动距离
+
+需要用到一个工具
+
+**VueUse** 是一个巨大的 **Vue 组合式 API (Composition API)** 工具集
+
+https://vueuse.org/
+
+安装它 
+
+```
+npm i @vueuse/core
+```
+
+搜索useScroll![1763367567118](README/1763367567118.png)
+
+测试
+
+```
+<script setup>
+//vue Use
+import { useScroll } from '@vueuse/core'
+const {y} = useScroll(window)
+</script>
+
+<template>
+  <div class="app-header-sticky">
+    {{ y }}
+```
+
+![1763367683107](README/1763367683107.png)
+
+3.show条件开启
+
+```
+<template>
+  <div class="app-header-sticky" :class="{ show:y > 78 }">
+    <div class="container">
+```
+
