@@ -733,7 +733,7 @@ const categoryStore = useCategoryStore()
 
 组件页创建![1763430278279](README/1763430278279.png)
 
-分类实现  （准备模板 -》使用Pinia中的数据渲染）
+### 7.1 分类实现  （准备模板 -》使用Pinia中的数据渲染）
 
 ```
 <script setup>
@@ -891,5 +891,53 @@ const categoryStore = useCategoryStore()
   }
 }
 </style>
+```
+
+### 7.2 轮播图实现
+
+1.使用element plus组件![1763430767205](README/1763430767205.png)
+
+
+
+2.获取接口数据![1763433100518](README/1763433100518.png)
+
+```
+import httpInstance from "@/utils/http";
+
+//封装banner
+
+export function getBannerAPI(){
+    return httpInstance({
+        url:'/home/banner'
+    })
+}
+```
+
+3.展示数据
+
+```
+<script setup>
+import {getBannerAPI} from '@/apis/home'
+import { onMounted,ref } from 'vue'
+
+const bannerList = ref([])
+const getBanner = async() =>{
+    const res = await getBannerAPI()
+    console.log(res)
+    bannerList.value = res.result
+}
+
+onMounted(() => getBanner())
+</script>
+
+<template>
+  <div class="home-banner">
+    <el-carousel height="500px">
+      <el-carousel-item v-for="item in bannerList" :key="item.id">
+        <img :src="item.imgUrl" alt="">
+      </el-carousel-item>
+    </el-carousel>
+  </div>
+</template>
 ```
 
