@@ -342,13 +342,13 @@ getCategory().then(res =>{
 
 
 
-# 5 静态资源引入
- 静态资源引入
+## 5 静态资源引入
+###  静态资源引入
 
 1. 图片资源 - 把 images 文件夹放到 assets 目录下
 2. 样式资源 - 把 common.scss 文件放到 styles 目录下
 
-scss变量自动导入
+### scss变量自动导入
 
 ```css
 $xtxColor: #27ba9b;
@@ -396,7 +396,7 @@ import LayoutFooter from './components/LayoutFooter.vue'
 
 效果：![1763363519547](README/1763363519547.png)
 
-6.1引入阿里图标库
+### 6.1引入阿里图标库
 
 网址：https://www.iconfont.cn/help/detail?spm=a313x.help_index.i3.48.21523a81nYt6cR&helptype=code![1763363692894](README/1763363692894.png)
 
@@ -406,7 +406,7 @@ import LayoutFooter from './components/LayoutFooter.vue'
   <link rel="stylesheet" href="//at.alicdn.com/t/font_2143783_iq6z4ey5vu.css">
 ```
 
-6.2 一级导航渲染
+### 6.2 一级导航渲染
 
 封装请求函数![1763366211223](README/1763366211223.png)
 
@@ -463,11 +463,11 @@ onMounted(() =>{
 </template>
 ```
 
-6.3吸顶导航
+### 6.3吸顶导航
 
 逻辑：准备吸顶导航组件 -》 获取滚动距离 -》以滚动距离做判断条件控制组件盒子是否展示
 
-1.准备吸顶导航组件
+#### 1.准备吸顶导航组件
 
 ![1763367256770](README/1763367256770.png)
 
@@ -634,7 +634,7 @@ onMounted(() =>{
 
 那么组件就显示，那么show的开启与否就是开启的条件
 
-2.获取滚动距离
+#### 2.获取滚动距离
 
 需要用到一个工具
 
@@ -666,7 +666,7 @@ const {y} = useScroll(window)
 
 ![1763367683107](README/1763367683107.png)
 
-3.show条件开启
+#### 3.show条件开启
 
 ```
 <template>
@@ -674,7 +674,7 @@ const {y} = useScroll(window)
     <div class="container">
 ```
 
-6.4重复请求优化
+### 6.4重复请求优化
 
 为啥
 
@@ -683,3 +683,213 @@ LayoutFixed.vue和LayoutHeader.vue 发送了两次相同网络请求，资源浪
 逻辑图
 
 ![1763384640558](README/1763384640558.png)
+
+创建文件
+
+![1763384834016](README/1763384834016.png)
+
+```
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
+import {getCategoryAPI} from '@/apis/layout'
+
+
+export const useCategoryStore = defineStore('category', () => {
+    //导航列表的数据管理
+    //state 导航列表数据
+    const categoryList =ref([])
+
+    //action 获取导航数据的方法
+    const getCategory = async() =>{
+    const res = await getCategoryAPI()
+    categoryList.value = res.result
+    }
+
+    return{
+        categoryList,
+        getCategory
+    }
+})
+
+```
+
+组件页使用pinia中的数据
+
+```
+import { useCategoryStore } from '@/stores/category';
+const categoryStore = useCategoryStore()
+
+......
+<li class="home" v-for="item in categoryStore.categoryList" :key="item.id">
+          <RouterLink to="/">{{item.name}}</RouterLink>
+        </li>
+```
+
+
+
+## 7 Home 页面搭建
+
+页面结构![1763430256512](README/1763430256512.png)
+
+组件页创建![1763430278279](README/1763430278279.png)
+
+分类实现  （准备模板 -》使用Pinia中的数据渲染）
+
+```
+<script setup>
+import {useCategoryStore} from '@/stores/category'
+
+const categoryStore = useCategoryStore()
+</script>
+
+<template>
+  <div class="home-category">
+    <ul class="menu">
+      <li v-for="item in categoryStore.categoryList" :key="item.id">
+        <RouterLink to="/">{{item.name}}</RouterLink>
+        <RouterLink v-for="i in item.children.slice(0,2)" :key="i" to="/">{{i.name}}</RouterLink>
+        <!-- 弹层layer位置 -->
+        <div class="layer">
+          <h4>分类推荐 <small>根据您的购买或浏览记录推荐</small></h4>
+          <ul>
+            <li v-for="i in item.goods" :key="i.id">
+              <RouterLink to="/">
+                <img :src="i.picture" alt="" />
+                <div class="info">
+                  <p class="name ellipsis-2">
+                    {{i.name}}
+                  </p>
+                  <p class="desc ellipsis">{{i.desc}}</p>
+                  <p class="price"><i>¥</i>{{i.price}}</p>
+                </div>
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </div>
+</template>
+
+
+<style scoped lang='scss'>
+.home-category {
+  width: 250px;
+  height: 500px;
+  background: rgba(0, 0, 0, 0.8);
+  position: relative;
+  z-index: 99;
+
+  .menu {
+    li {
+      padding-left: 40px;
+      height: 55px;
+      line-height: 55px;
+
+      &:hover {
+        background: $xtxColor;
+      }
+
+      a {
+        margin-right: 4px;
+        color: #fff;
+
+        &:first-child {
+          font-size: 16px;
+        }
+      }
+
+      .layer {
+        width: 990px;
+        height: 500px;
+        background: rgba(255, 255, 255, 0.8);
+        position: absolute;
+        left: 250px;
+        top: 0;
+        display: none;
+        padding: 0 15px;
+
+        h4 {
+          font-size: 20px;
+          font-weight: normal;
+          line-height: 80px;
+
+          small {
+            font-size: 16px;
+            color: #666;
+          }
+        }
+
+        ul {
+          display: flex;
+          flex-wrap: wrap;
+
+          li {
+            width: 310px;
+            height: 120px;
+            margin-right: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background: #fff;
+
+            &:nth-child(3n) {
+              margin-right: 0;
+            }
+
+            a {
+              display: flex;
+              width: 100%;
+              height: 100%;
+              align-items: center;
+              padding: 10px;
+
+              &:hover {
+                background: #e3f9f4;
+              }
+
+              img {
+                width: 95px;
+                height: 95px;
+              }
+
+              .info {
+                padding-left: 10px;
+                line-height: 24px;
+                overflow: hidden;
+
+                .name {
+                  font-size: 16px;
+                  color: #666;
+                }
+
+                .desc {
+                  color: #999;
+                }
+
+                .price {
+                  font-size: 22px;
+                  color: $priceColor;
+
+                  i {
+                    font-size: 16px;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      // 关键样式  hover状态下的layer盒子变成block
+      &:hover {
+        .layer {
+          display: block;
+        }
+      }
+    }
+  }
+}
+</style>
+```
+
