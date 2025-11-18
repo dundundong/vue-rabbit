@@ -1162,3 +1162,167 @@ onMounted (()=> getNewList())
   </HomePanel>
 ```
 
+### 7.5 人气推荐
+
+和7.5一样
+
+接口
+
+```
+export const getHotAPI = () => {
+  return httpInstance({
+    url:'/home/hot'
+  })
+}
+```
+
+数据渲染获取
+
+```
+<script setup>
+import { onMounted ,ref} from 'vue';
+import HomePanel from './HomePanel.vue';
+import {getHotAPI} from '@/apis/home'
+
+//获取数据
+const hotList = ref([])
+const getHotList = async() =>{
+    const res = await getHotAPI()
+    hotList.value = res.result
+}
+
+onMounted (()=> getHotList())
+</script>
+
+<template>
+  
+  <HomePanel title="人气推荐" sub-title="人气爆款 不容错过">
+    <ul class="goods-list">
+    <li v-for="item in hotList" :key="item.id">
+      <RouterLink to="/">
+        <img v-img-lazy="item.picture" :src="item.picture" alt="" />
+        <p class="name">{{ item.title }}</p>
+        <p class="desc">{{ item.alt }}</p>
+      </RouterLink>
+    </li>
+  </ul>
+  </HomePanel>
+</template>
+
+<style scoped lang='scss'>
+.goods-list {
+  display: flex;
+  justify-content: space-between;
+  height: 426px;
+
+  li {
+    width: 306px;
+    height: 406px;
+    transition: all .5s;
+
+    &:hover {
+      transform: translate3d(0, -3px, 0);
+      box-shadow: 0 3px 8px rgb(0 0 0 / 20%);
+    }
+
+    img {
+      width: 306px;
+      height: 306px;
+    }
+
+    p {
+      font-size: 22px;
+      padding-top: 12px;
+      text-align: center;
+    }
+
+    .desc {
+      color: #999;
+      font-size: 18px;
+    }
+  }
+}
+</style>
+```
+
+
+
+### 7.6 图片懒加载
+
+图片进入视口才发送请求
+
+指令语法 -》 判断是否进入视口（vueUse） -》 测试 -》如果进入，发送请求 -》测试
+
+#### 1.看Vue3官方文档 ->自定义指令
+
+官方描述
+
+```
+将一个自定义指令全局注册到应用层级也是一种常见的做法：
+
+const app = createApp({})
+
+// 使 v-highlight 在所有组件中都可用
+app.directive('highlight', {
+  /* ... */
+})
+```
+
+照做  在main.js
+
+```
+//定义全局指令
+app.directive('img-lazy',{
+    mounted(el,binging){
+        //el:指令绑定的那个元素
+        //binging:binging.value 指令等于号后面绑定的表达式的值 图片url
+        console.log(el,binging.value)
+    }
+})
+```
+
+测试  在hot页改图片属性
+
+```
+ <img v-img-lazy="item.picture" :src="item.picture" alt="" />
+// v-img-lazy="item.picture"
+```
+
+成功打印![1763451030539](README/1763451030539.png)
+
+#### 2.判断是否进入视口
+
+去vueuse官网搜   useIntersectionObserver
+
+![1763453765458](README/1763453765458.png)
+
+![1763453777584](README/1763453777584.png)
+
+使用  在main.js
+
+```
+import { useIntersectionObserver } from '@vueuse/core'
+.....
+useIntersectionObserver(
+          el,
+          ([{ isIntersecting }]) => {
+            console.log(isIntersecting)
+          },
+        )
+```
+
+测试  成功打印![1763453894464](README/1763453894464.png)
+
+#### 3.条件判断
+
+```
+if(isIntersecting){
+                //进入了视口区域
+                el.src = binging.value
+            }
+```
+
+测试   成功实现进入视图区域后再发送网络请求，实现懒加载![1763454289199](README/1763454289199.png)
+
+
+
