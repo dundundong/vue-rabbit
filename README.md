@@ -941,3 +941,105 @@ onMounted(() => getBanner())
 </template>
 ```
 
+### 7.3 组件封装
+
+步骤：![1763433713543](README/1763433713543.png)
+
+1.模板
+
+```
+<script setup>
+
+</script>
+
+
+<template>
+  <div class="home-panel">
+    <div class="container">
+      <div class="head">
+         <!-- 主标题和副标题 -->
+        <h3>
+          新鲜好物<small>新鲜出炉 品质靠谱</small>
+        </h3>
+      </div>
+      <!-- 主体内容区域 -->
+      <div> 主体内容 </div>
+    </div>
+  </div>
+</template>
+
+<style scoped lang='scss'>
+.home-panel {
+  background-color: #fff;
+
+  .head {
+    padding: 40px 0;
+    display: flex;
+    align-items: flex-end;
+
+    h3 {
+      flex: 1;
+      font-size: 32px;
+      font-weight: normal;
+      margin-left: 6px;
+      height: 35px;
+      line-height: 35px;
+
+      small {
+        font-size: 16px;
+        color: #999;
+        margin-left: 20px;
+      }
+    }
+  }
+}
+</style>
+```
+
+2.组件参数
+
+```
+<script setup>
+//定义props
+defineProps({
+  title:{
+    type:String
+  },
+  subTitle:({
+    type:String
+  })
+})
+</script>
+<template>
+  <div class="home-panel">
+    <div class="container">
+      <div class="head">
+         <!-- 主标题和副标题 -->
+        <h3>
+          {{title}}<small>{{subTitle}}</small>
+        </h3>
+      </div>
+      <!-- 主体内容区域 -->
+      <slot />
+    </div>
+  </div>
+</template>
+```
+
+3.使用 
+
+```
+import HomePanel from './components/HomePanel.vue'
+
+ <HomePanel title="新鲜好物" sub-title="新鲜好物 好多商品">
+    <div>
+      我是新鲜好物的插槽
+    </div>
+  </HomePanel >
+  <HomePanel title="人气推荐" sub-title="人气推荐 好多商品">
+    <div>
+      我是人气推荐的插槽
+    </div>
+  </HomePanel>
+```
+
