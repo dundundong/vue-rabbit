@@ -1644,3 +1644,30 @@ import GoodsItem from './GoodsItem.vue'
 </ul>
 ```
 
+## 8 一级分类页
+
+### 8.1 结构搭建和路由配置
+
+1.创建页面![1763537183746](README/1763537183746.png)
+
+2.动态路由配置  router/index.js中
+
+```
+{
+   path:'category/:id',
+   component:Category
+}
+```
+
+两个导航栏配置
+
+LayoutHeader.vue  /  LayoutFixed.vue
+
+```
+<li class="home" v-for="item in categoryStore.categoryList" :key="item.id">
+   <RouterLink :to="`/category/${item.id}`">{{item.name}}		</RouterLink>
+</li>
+```
+
+3.鼠标放导航栏出现地址![1763537514117](README/1763537514117.png)
+
