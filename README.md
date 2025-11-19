@@ -1326,3 +1326,75 @@ if(isIntersecting){
 
 
 
+### 7.7 懒加载封装组件
+
+创建文件![1763518669729](README/1763518669729.png)
+
+封装指令
+
+```
+import { useIntersectionObserver } from '@vueuse/core'
+
+
+//定义懒加载插件
+export const lazyPlugin = {
+    install(app) {
+        //懒加载指令逻辑
+        app.directive('img-lazy',{
+        mounted(el,binging){
+            //el:指令绑定的那个元素
+            //binging:binging.value 指令等于号后面绑定的表达式的值 图片url
+            console.log(el,binging.value)
+            useIntersectionObserver(
+            el,
+            ([{ isIntersecting }]) => {
+                console.log(isIntersecting)
+                if(isIntersecting){
+                    //进入了视口区域
+                    el.src = binging.value
+                }
+            },
+            )
+            }
+        })
+    }
+}
+```
+
+main.js注册使用
+
+```
+//引入懒加载插件
+import { lazyPlugin } from './directives'
+app.use(lazyPlugin)
+```
+
+
+
+
+
+还有个问题，useIntersectionObserver监听函数在加载完图片后不停止反复监听
+
+![1763518946785](README/1763518946785.png)
+
+### 7.8 监听优化
+
+加入shop停止监听
+
+```
+const { stop } = useIntersectionObserver(
+                    el,
+                    ([{ isIntersecting }]) => {
+                        console.log(isIntersecting)
+                        if (isIntersecting) {
+                            //进入了视口区域
+                            el.src = binging.value
+                            //停止监听
+                            stop()
+                        }
+                    },
+                )
+```
+
+![1763519437758](README/1763519437758.png)
+
