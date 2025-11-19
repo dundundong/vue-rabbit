@@ -1600,3 +1600,47 @@ onMounted( ()=> getGoods() )
 <img v-img-lazy="good.picture" alt="" />
 ```
 
+### 7.10 产品列表里组件封装
+
+抽象porps参数，传入什么就显示什么
+
+这部分组件都一样，可以封装成一个组件，插槽调用
+
+![1763523977799](README/1763523977799.png)
+
+1.创建封装文件![1763524146334](README/1763524146334.png)
+
+2.导入复用部分
+
+```
+<script setup>
+    defineProps({
+      goods:{
+        type:Object,
+        default:() => {} 
+      }
+    })
+</script>
+
+<template>
+  <RouterLink to="/" class="goods-item">
+    <img v-img-lazy="goods.picture" alt="" />
+    <p class="name ellipsis">{{ goods.name }}</p>
+    <p class="desc ellipsis">{{ goods.desc }}</p>
+    <p class="price">&yen;{{ goods.price }}</p>
+  </RouterLink>
+</template>
+```
+
+3.引用
+
+```
+import GoodsItem from './GoodsItem.vue'
+....
+<ul class="goods-list">
+   <li v-for="goods in cate.goods" :key="goods.id">
+     <GoodsItem :goods="goods" />
+   </li>
+</ul>
+```
+
