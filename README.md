@@ -1671,3 +1671,62 @@ LayoutHeader.vue  /  LayoutFixed.vue
 
 3.鼠标放导航栏出现地址![1763537514117](README/1763537514117.png)
 
+### 8.2 面包屑导航
+
+让用户知道自己当前在哪个位置
+
+![1763537624763](README/1763537624763.png)
+
+模板 -》 接口函数 -》调用接口获取数据 -》渲染模板
+
+1.去饿了么看下面包屑![1763537831745](README/1763537831745.png)
+
+2.封装接口
+
+id为必填传参
+
+![1763601671101](README/1763601671101.png)
+
+```
+import request from '@/utils/http'
+
+export function getCategoryApI(id) {
+  return request({
+    url: '/category',
+    params:{
+        id
+    }
+  })
+}
+```
+
+3.调用接口
+
+使用路由示例获取参数
+
+```
+<script setup>
+import {getCategoryApI} from '@/apis/category.js'
+import {onMounted, ref} from 'vue'
+import { useRoute } from 'vue-router'
+
+//获取数据
+const categoryData  = ref([])
+const route = useRoute()
+const getCategory = async() =>{
+  const res = await getCategoryApI(route.params.id)
+  categoryData.value = res.result
+}
+onMounted(()=>getCategory())
+</script>
+```
+
+4.测试
+
+```
+<el-breadcrumb-item>{{categoryData.name}}</el-breadcrumb-item>
+
+```
+
+![1763601817424](README/1763601817424.png)
+
