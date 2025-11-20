@@ -2134,3 +2134,53 @@ onMounted(() => getCategoryData())
 
 封装接口 -》 准备参数 -》获取数据渲染
 
+1.接口
+
+```
+/**
+ * @description: 获取导航数据
+ * @data { 
+     categoryId: 1005000 ,
+     page: 1,
+     pageSize: 20,
+     sortField: 'publishTime' | 'orderNum' | 'evaluateNum'
+   } 
+ * @return {*}
+ */
+export const getSubCategoryAPI = (data) => {
+  return request({
+    url:'/category/goods/temporary',
+    method:'POST',
+    data
+  })
+}
+```
+
+2.获取数据
+
+```
+//获取基础列表数据
+const goodsList = ref([])
+const reqData = ref({
+    categoryId: route.params.id,
+    page: 1,
+    pageSize: 20,
+    sort:'publishTime'
+})
+const getGoodList =async() =>{
+    const res = await getSubCategoryAPI(reqData.value)
+    console.log(res);
+    goodsList.value = res.result.items
+}
+onMounted(() => getGoodList())
+```
+
+3.复用商品组件渲染
+
+```
+<div class="body">
+  <!-- 商品列表-->   
+    <GoodsItem v-for="goods in goodsList" :goods="goods" :key="goods.id"/>
+</div>
+```
+
