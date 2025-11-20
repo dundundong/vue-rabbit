@@ -1730,3 +1730,46 @@ onMounted(()=>getCategory())
 
 ![1763601817424](README/1763601817424.png)
 
+### 8.3 轮播图实现
+
+和首页轮播图类似，可以复用
+
+改造接口（适配参数） -》 迁移首页轮播
+
+1.传入请求参数
+
+params解构赋值，默认为1
+
+```
+export function getBannerAPI(params = {}) {
+  //1为首页，2为分类商品页
+  const {distributionSite = '1'} = params
+  return httpInstance({
+    url: '/home/banner',
+    params:{
+      distributionSite
+    }
+  })
+}
+```
+
+改造接口
+
+```
+const res = await getBannerAPI({
+   distributionSite: '2'
+ })
+```
+
+2.复制模板
+
+```
+<div class="home-banner">
+        <el-carousel height="500px">
+          <el-carousel-item v-for="item in bannerList" :key="item.id">
+            <img :src="item.imgUrl" alt="">
+          </el-carousel-item>
+        </el-carousel>
+      </div>
+```
+

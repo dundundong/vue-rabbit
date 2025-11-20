@@ -2,9 +2,14 @@ import httpInstance from "@/utils/http";
 
 //封装banner
 
-export function getBannerAPI() {
+export function getBannerAPI(params = {}) {
+  //1为首页，2为分类商品页
+  const {distributionSite = '1'} = params
   return httpInstance({
-    url: '/home/banner'
+    url: '/home/banner',
+    params:{
+      distributionSite
+    }
   })
 }
 
