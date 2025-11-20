@@ -1872,3 +1872,204 @@ onBeforeRouteUpdate((to)=>{
 
 ### 8.6 业务逻辑拆分成组件
 
+提高可维护性
+
+思路：
+
+分类业务  -》 useCategory
+
+banner业务  -》 useBanner
+
+![1763622143962](README/1763622143962.png)
+
+useCategory.vue
+
+```
+//封装轮播图相关业务代码
+import {onMounted, ref} from 'vue'
+import {getBannerAPI} from '@/apis/home'
+
+export function useBanner(){
+    const bannerList = ref([])
+    const getBanner = async() =>{
+    const res = await getBannerAPI({
+      distributionSite: '2'
+    })
+    console.log(res)
+    bannerList.value = res.result
+    }
+
+    onMounted(() => getBanner())
+
+    return {
+        bannerList
+    }
+}
+```
+
+ useBanner.vue
+
+```
+//封装分类数据业务相关代码
+import {onMounted, ref} from 'vue'
+import {getCategoryApI} from '@/apis/category.js'
+import { onBeforeRouteUpdate, useRoute } from 'vue-router'
+
+
+export function useCategory() {    
+    //获取数据
+    const categoryData  = ref([])
+    const route = useRoute()
+    const getCategory = async(id = route.params.id) =>{
+    const res = await getCategoryApI(id)
+    categoryData.value = res.result
+    }
+    onMounted(()=>getCategory())
+
+    //在路由参数变化时，可以把分类数据数据接口重新发送
+    onBeforeRouteUpdate((to)=>{
+    console.log('路由参数变化了')
+    console.log(to)
+    getCategory(to.params.id)
+    })
+
+    return{
+        categoryData
+    }
+
+}
+```
+
+index.js解构赋值引用
+
+```
+import {useBanner} from './composables/useBanner.js'
+import {useCategory} from './composables/useCategory.js'
+const {bannerList} = useBanner()
+const { categoryData } = useCategory()
+```
+
+
+
+## 9 二级分类页
+
+### 9.1 二级路由配置
+
+创建路由组件 -》 配置路由关系  -》实现跳转
+
+1.创建组件![1763624495246](README/1763624495246.png)
+
+```
+<script setup>
+
+
+</script>
+
+<template>
+  <div class="container ">
+    <!-- 面包屑 -->
+    <div class="bread-container">
+      <el-breadcrumb separator=">">
+        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: '/' }">居家
+        </el-breadcrumb-item>
+        <el-breadcrumb-item>居家生活用品</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+    <div class="sub-container">
+      <el-tabs>
+        <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
+        <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
+        <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>
+      </el-tabs>
+      <div class="body">
+         <!-- 商品列表-->
+      </div>
+    </div>
+  </div>
+
+</template>
+
+
+
+<style lang="scss" scoped>
+.bread-container {
+  padding: 25px 0;
+  color: #666;
+}
+
+.sub-container {
+  padding: 20px 10px;
+  background-color: #fff;
+
+  .body {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 10px;
+  }
+
+  .goods-item {
+    display: block;
+    width: 220px;
+    margin-right: 20px;
+    padding: 20px 30px;
+    text-align: center;
+
+    img {
+      width: 160px;
+      height: 160px;
+    }
+
+    p {
+      padding-top: 10px;
+    }
+
+    .name {
+      font-size: 16px;
+    }
+
+    .desc {
+      color: #999;
+      height: 29px;
+    }
+
+    .price {
+      color: $priceColor;
+      font-size: 20px;
+    }
+  }
+
+  .pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+
+}
+</style>
+```
+
+2.router修改
+
+router/index.js
+
+```
+import SubCategory from '@/views/SubCategory/index.vue'
+{
+   path:'category/sub/:id',
+   component:SubCategory
+}
+```
+
+views/Category/index.vue
+
+```
+<RouterLink :to="`/category/sub/${i.id}`">
+    <img :src="i.picture" />
+    <p>{{ i.name }}</p>
+ </RouterLink>
+```
+
+3.测试![1763624623999](README/1763624623999.png)
+
