@@ -20,7 +20,7 @@ const reqData = ref({
     categoryId: route.params.id,
     page: 1,
     pageSize: 20,
-    sort:'publishTime'
+    sortField:'publishTime'
 })
 const getGoodList =async() =>{
     const res = await getSubCategoryAPI(reqData.value)
@@ -28,6 +28,13 @@ const getGoodList =async() =>{
     goodsList.value = res.result.items
 }
 onMounted(() => getGoodList())
+
+//tab切换回调
+const tabChange = () =>{
+    console.log('tab切换了',reqData.value.sortField);
+    reqData.value.page = 1
+    getGoodList()
+}
 
 </script>
 
@@ -44,7 +51,7 @@ onMounted(() => getGoodList())
     </div>
 
     <div class="sub-container">
-      <el-tabs>
+      <el-tabs v-model="reqData.sortField" @tab-change="tabChange">
         <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
         <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
         <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>

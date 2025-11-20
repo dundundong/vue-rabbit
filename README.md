@@ -2184,3 +2184,30 @@ onMounted(() => getGoodList())
 </div>
 ```
 
+#### 9.3.2 筛选功能
+
+获取点击tab的数据  -》 使用新参数发送请求重新渲染列表
+
+1.通过v-model绑定sortField  ,并添加点击事件
+
+```
+<el-tabs v-model="reqData.sortField" @tab-change="tabChange">
+   <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
+   <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
+   <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>
+</el-tabs>
+```
+
+2.重新调用getGoodList函数
+
+```
+//tab切换回调
+const tabChange = () =>{
+    console.log('tab切换了',reqData.value.sortField);
+    reqData.value.page = 1
+    getGoodList()
+}
+```
+
+成功![1763644212939](README/1763644212939.png)
+
