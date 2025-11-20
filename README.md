@@ -2211,3 +2211,100 @@ const tabChange = () =>{
 
 成功![1763644212939](README/1763644212939.png)
 
+#### 9.3.3 列表无限加载
+
+用饿了么的![1763644719059](README/1763644719059.png)
+
+配置v-infinite-scroll -》页数加1获取下一页数据 -》 老数据和新数据拼接  -》加载完毕结束监听
+
+1.添加v-infinite-scroll="load"属性
+
+```
+//加载更多
+const load = () => {
+    console.log('加载更多');
+}
+
+<div class="body" v-infinite-scroll="load">
+  <!-- 商品列表-->   
+  <GoodsItem v-for="goods in goodsList" :goods="goods"  :key="goods.id"/>
+</div>
+```
+
+测试![1763645010062](README/1763645010062.png)
+
+2.数据处理
+
+两数组拼接和当后端传空数组时disable赋值实现禁用加载
+
+```
+<div class="body" v-infinite-scroll="load" :infinite-scroll-disabled="disabled">
+....
+const disabled = ref(false)
+//加载更多
+const load = async() => {
+    console.log('加载更多');
+    reqData.value.page++
+    const res = await getSubCategoryAPI(reqData.value)
+    goodsList.value = [...goodsList.value,...res.result.items]
+    //加载完毕 停止监听
+    if(res.result.items.length === 0){
+        disabled.value = true
+    }
+}
+```
+
+
+
+![1763645471861](README/1763645471861.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
