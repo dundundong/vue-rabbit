@@ -1813,3 +1813,57 @@ ok了![1763605550114](README/1763605550114.png)
       </div>
 ```
 
+### 8.5 路由缓存问题
+
+![1763606235620](README/1763606235620.png)
+
+比如：切换这两个下面页面没变化![1763606257457](README/1763606257457.png)![1763606269306](README/1763606269306.png)
+
+思路1：在/Layout/index.vue  路由出口 
+
+```
+ <!--添加key 破坏复用机制 强制销毁重建-->
+  <RouterView :key="$route.fullPath" />
+```
+
+成功实现，但有个问题，每次切换不同分类页，Banner图是一样的，但![1763606971951](README/1763606971951.png)
+
+请求重复出现，资源浪费
+
+
+
+所以思路2：在路由参数变化时，可以把分类数据数据接口重新发送
+
+添加监听函数
+
+```
+import { onBeforeRouteUpdate, useRoute } from 'vue-router'
+...
+onBeforeRouteUpdate(()=>{
+  console.log('路由参数变化了')
+})
+```
+
+测试![1763607410073](README/1763607410073.png)
+
+id传参
+
+```
+//获取数据
+const categoryData  = ref([])
+const route = useRoute()
+const getCategory = async(id = route.params.id) =>{
+  const res = await getCategoryApI(id)
+  categoryData.value = res.result
+}
+onMounted(()=>getCategory())
+
+//在路由参数变化时，可以把分类数据数据接口重新发送
+onBeforeRouteUpdate((to)=>{
+  console.log('路由参数变化了')
+  console.log(to)
+  getCategory(to.params.id)
+})
+```
+
+成功![1763607866190](README/1763607866190.png)
