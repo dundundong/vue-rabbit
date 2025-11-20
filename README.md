@@ -2075,3 +2075,62 @@ views/Category/index.vue
 
 ### 9.2 二级面包屑
 
+封装接口 -》 调用接口渲染 -》测试
+
+1.接口
+
+```
+/**
+ * @description: 获取二级分类列表数据
+ * @param {*} id 分类id 
+ * @return {*}
+ */
+
+export const getCategoryFilterAPI = (id) => {
+  return request({
+    url:'/category/sub/filter',
+    params:{
+      id
+    }
+  })
+}
+```
+
+2.调用接口
+
+```
+const route = useRoute()
+const categoryData = ref({})
+const getCategoryData = async() =>{
+    const res =await getCategoryFilterAPI(route.params.id)
+    categoryData.value = res.result
+}
+
+onMounted(() => getCategoryData())
+```
+
+测试![1763625755594](README/1763625755594.png)
+
+3.渲染
+
+```
+<div class="bread-container">
+      <el-breadcrumb separator=">">
+        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ path: `/category/${categoryData.parentId}` }">{{categoryData.parentName}}
+        </el-breadcrumb-item>
+        <el-breadcrumb-item>{{ categoryData.name }}</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+```
+
+4.测试![1763625811797](README/1763625811797.png)
+
+### 9.3 商品列表
+
+基础列表渲染 -》 筛选功能 -》 无限加载
+
+#### 9.3.1基础列表渲染
+
+封装接口 -》 准备参数 -》获取数据渲染
+
