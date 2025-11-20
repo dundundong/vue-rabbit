@@ -1773,3 +1773,43 @@ const res = await getBannerAPI({
       </div>
 ```
 
+### 8.4 导航激活、分类列表渲染
+
+在RouterLink配置类名    LayoutHeader.vue
+
+```
+<RouterLink active-class="active" :to="`/category/${item.id}`">{{item.name}}</RouterLink>
+
+...
+.active{
+      color:$xtxColor;
+      border-bottom: 1px solid $xtxColor;
+    }
+```
+
+ok了![1763605550114](README/1763605550114.png)
+
+列表
+
+```
+<div class="sub-list">
+        <h3>全部分类</h3>
+        <ul>
+          <li v-for="i in categoryData.children" :key="i.id">
+            <RouterLink to="/">
+              <img :src="i.picture" />
+              <p>{{ i.name }}</p>
+            </RouterLink>
+          </li>
+        </ul>
+      </div>
+      <div class="ref-goods" v-for="item in categoryData.children" :key="item.id">
+        <div class="head">
+          <h3>- {{ item.name }}-</h3>
+        </div>
+        <div class="body">
+          <GoodsItem v-for="good in item.goods" :goods="good" :key="good.id" />
+        </div>
+      </div>
+```
+
